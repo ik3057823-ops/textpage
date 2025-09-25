@@ -68,18 +68,92 @@
       .vpage{transition:none}
     }
 
-    olid var(--border); box-shadow:0 10px 30px rgba(0,0,0,.08)}
+    @media (max-width:760px){
+      .wrap,.content{padding:0 16px}
+      .pv-nav{gap:24px; bottom:calc(28px + env(safe-area-inset-bottom))}
+      .iconbtn{width:96px; height:96px; border-radius:18px}
+      .iconbtn svg{width:44px; height:44px}
+      body.split-open .split-left{width:100vw; height:50vh; left:0; top:0; right:0}
+      body.split-open .viewport{left:0; top:50vh; right:0; bottom:0; margin:0; height:auto}
+    }
+      .pv-nav{gap:24px; bottom:calc(28px + env(safe-area-inset-bottom))}
+      .iconbtn{width:96px; height:96px; border-radius:18px}
+      .iconbtn svg{width:44px; height:44px}
+    }
+      .pv-nav{gap:20px; bottom:calc(28px + env(safe-area-inset-bottom))}
+      .iconbtn{width:56px; height:56px; border-radius:14px}
+      .iconbtn svg{width:26px; height:26px}
+    }
+    }
+    }
+      /* Bottom-centered navigation (restored) */
+    .pv-nav{position:fixed; left:50%; transform:translateX(-50%); bottom:24px; display:flex; gap:14px; z-index:20}
+    .iconbtn{display:inline-grid; place-items:center; width:36px; height:36px; border:1px solid var(--text); border-radius:10px; background:var(--text); box-shadow:0 3px 10px rgba(0,0,0,.12); cursor:pointer; color:#fff}
+    .iconbtn:hover{filter:brightness(1.05)}
+    .iconbtn svg{width:20px; height:20px; stroke:currentColor}
+      .page-spacer{height:160px}
+      /* navigation drawer removed as per request */
+
+    .lms-drawer{position:fixed; top:0; left:0; bottom:0; width:320px; max-width:86vw; background:#fff; border-right:1px solid var(--border); box-shadow:0 20px 50px rgba(0,0,0,.12); transform:translateX(-100%); transition:transform .35s cubic-bezier(.2,.8,.2,1); z-index:99; display:flex; flex-direction:column}
+    .lms-drawer.open{transform:translateX(0)}
+    .lms-drawer header{display:flex; align-items:center; justify-content:space-between; gap:8px; padding:12px 12px; border-bottom:1px solid var(--border)}
+    .lms-drawer .closebtn{display:inline-grid; place-items:center; width:36px; height:36px; border:1px solid var(--border); border-radius:10px; background:#fff; box-shadow:0 3px 10px rgba(0,0,0,.03); cursor:pointer}
+    .lms-drawer iframe{flex:1; width:100%; height:100%; border:0}
+    .lms-drawer .drawer-body{display:flex; flex:1; min-height:0; flex-direction:column}
+    .drawer-fallback{padding:16px; color:var(--muted); border-top:1px solid var(--border)}
+    .drawer-fallback .openlink{display:inline-flex; align-items:center; gap:10px; background:#fff; border:1px solid var(--border); border-radius:999px; padding:10px 14px; font-weight:600; box-shadow:0 3px 10px rgba(0,0,0,.06); color:var(--text); text-decoration:none}
+    .drawer-fallback svg{width:18px; height:18px}
+
+    @media (max-width:760px){
+      .lms-drawer{width:300px}
+    }
+      /* === 50/50 split view (menu + current page in one tab) === */
+    .split-left{display:none}
+    body.split-open .split-left{display:flex; flex-direction:column; position:fixed; z-index:60; left:0; top:0; bottom:0; width:50vw; max-width:50vw; background:#fff; border-right:1px solid var(--border); box-shadow:0 10px 30px rgba(0,0,0,.08)}
+    body.split-open .split-left iframe{flex:1; width:100%; height:100%; border:0}
+
+    /* Right pane occupies exactly the other half */
     body.split-open .viewport{position:fixed; left:50vw; right:0; top:0; bottom:0; overflow:auto; margin:0; height:auto; background:var(--bg)}
-    .split-toolbar{display:flex; align-items:center; er); background:#fff; border-radius:999px; padding:8px 12px; font-weight:600; text-decoration:none; color:var(--text)}
-    .split-close{display:inline-grid; place-items:center; width:36px; height:36px; border:1px solid var(--border); border-radius:10px; background:#fff; box-shadow:0 3px 10px rgba(0,0,0,.03);ack{padding:14px; color:var(--muted); border-top:1px solid var(--border); display:none}
-    .split-fallback.show{display:block}
+
+    /* Make inner containers use full right-pane width (not the old 860px max) */
+    body.split-open .wrap, body.split-open .content{max-width:none; width:100%; padding-left:20px; padding-right:20px}
+
+    /* Center the Up/Down buttons within the right pane */
+    body.split-open .pv-nav{left:calc(50vw + 25vw); transform:translateX(-50%)}
 
     /* Mobile: stack 50/50 vertically */
     @media (max-width:760px){
-      body.split-open .split-left{width:100vw; height:50vh}
+      body.split-open .split-left{width:100vw; height:50vh; left:0; top:0; right:0}
+      body.split-open .viewport{left:0; top:50vh; right:0; bottom:0; margin:0; height:auto}
+      body.split-open .pv-nav{left:50%; transform:translateX(-50%)}
+    }
       body.split-open .viewport{margin-left:0; margin-top:50vh; height:50vh}
     }
-      body.split-open .viewport{margin-left:0; margin-top:5p" aria-labelledby="title">
+      body.split-open .viewport{margin-left:0; margin-top:50vh; height:50vh}
+    }
+  </style>
+</head>
+<body>
+  <aside class="split-left" aria-label="Course menu (split view)">
+    <div class="split-toolbar">
+      <strong>Menu</strong>
+      <button id="splitClose" class="split-close" aria-label="Close split view">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <iframe id="splitIframe" title="Course navigation" src="https://ik3057823-ops.github.io/darsmenu/"></iframe>
+  </aside>
+  <div class="viewport">
+    <header class="wrap pv-header">
+      <a href="#" id="menuBtn" class="menu-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18"/><path d="M3 6h18"/><path d="M3 18h18"/></svg>
+        <span>Menu</span>
+      </a>
+      <div style="flex:1"></div>
+    </header>
+
+    <!-- Slides (scrollable and via buttons) -->
+    <main class="wrap" aria-labelledby="title">
       <section class="content">
         <h1 id="title">Dive Deep</h1>
         <p class="subtitle">Retrieval Practice — principles, benefits, and classroom strategies</p>
