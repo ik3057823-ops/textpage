@@ -103,19 +103,37 @@
     }
       /* === 50/50 split view (menu + current page in one tab) === */
     .split-left{display:none}
-    body.split-open .split-left{display:block; position:fixed; z-index:60; left:0; top:0; bottom:0; width:50vw; background:#fff; border-right:1px solid var(--border); box-shadow:0 10px 30px rgba(0,0,0,.08)}
-    body.split-open .split-left iframe{width:100%; height:100%; border:0}
+    body.split-open .split-left{display:flex; flex-direction:column; position:fixed; z-index:60; left:0; top:0; bottom:0; width:50vw; background:#fff; border-right:1px solid var(--border); box-shadow:0 10px 30px rgba(0,0,0,.08)}
     body.split-open .viewport{margin-left:50vw; height:100vh; overflow:auto}
+    .split-toolbar{display:flex; align-items:center; justify-content:space-between; gap:8px; padding:8px 10px; border-bottom:1px solid var(--border); background:#fff}
+    .split-link{display:inline-flex; align-items:center; gap:8px; border:1px solid var(--border); background:#fff; border-radius:999px; padding:8px 12px; font-weight:600; text-decoration:none; color:var(--text)}
+    .split-close{display:inline-grid; place-items:center; width:36px; height:36px; border:1px solid var(--border); border-radius:10px; background:#fff; box-shadow:0 3px 10px rgba(0,0,0,.03); cursor:pointer}
+    .split-left iframe{flex:1; width:100%; height:100%; border:0}
+    .split-fallback{padding:14px; color:var(--muted); border-top:1px solid var(--border); display:none}
+    .split-fallback.show{display:block}
+
     /* Mobile: stack 50/50 vertically */
     @media (max-width:760px){
       body.split-open .split-left{width:100vw; height:50vh}
+      body.split-open .viewport{margin-left:0; margin-top:50vh; height:50vh}
+    }
       body.split-open .viewport{margin-left:0; margin-top:50vh; height:50vh}
     }
   </style>
 </head>
 <body>
   <aside class="split-left" aria-label="Course menu (split view)">
-    <iframe title="Course navigation" src="https://ik3057823-ops.github.io/darsmenu/"></iframe>
+    <div class="split-toolbar">
+      <a class="split-link" href="https://ik3057823-ops.github.io/darsmenu/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3h7v7"/><path d="M10 14L21 3"/><path d="M5 7v14h14"/></svg>
+        Open full menu
+      </a>
+      <button id="splitClose" class="split-close" aria-label="Close split view">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <iframe id="splitIframe" title="Course navigation" src="https://ik3057823-ops.github.io/darsmenu/"></iframe>
+    <div id="splitFallback" class="split-fallback" aria-live="polite">Menu couldn’t be embedded here. Use the "Open full menu" button above.</div>
   </aside>
   <div class="viewport">
     <header class="wrap pv-header">
@@ -231,6 +249,16 @@
       e.preventDefault();
       document.body.classList.add('split-open');
       menuBtn.setAttribute('aria-expanded','true');
+      // try to detect load; some sites block iframes
+      const iframe = document.getElementById('splitIframe');
+      const fallback = document.getElementById('splitFallback');
+      let t = setTimeout(()=>{ fallback?.classList.add('show'); }, 1500);
+      iframe?.addEventListener('load', ()=>{ clearTimeout(t); fallback?.classList.remove('show'); }, { once: true });
+    });
+
+    document.getElementById('splitClose')?.addEventListener('click', ()=>{
+      document.body.classList.remove('split-open');
+      menuBtn?.setAttribute('aria-expanded','false');
     });
   })();
 </script>
