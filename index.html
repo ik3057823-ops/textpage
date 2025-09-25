@@ -3,41 +3,48 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dive Deep — Retrieval Practice (Paged with Masthead)</title>
+  <title>Dive Deep — Retrieval Practice (Paged)</title>
   <style>
     :root{
+      /* Project-wide font stack */
+      --font: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
       --text:#111; --muted:#5f6368; --border:#e6e6e6; --bg:#ffffff; --panel:#ffffff; --soft:#fbf8f5; --pill:#f3f4f6; --accent:#111; --radius:18px; --shadow:0 10px 25px rgba(0,0,0,.06);
     }
+    /* Normalize font usage everywhere to avoid UA overrides */
+    html, body, h1, h2, h3, p, ul, li, a, button, input, select, textarea, figcaption, .iconbtn, .menu-btn, .subtitle, .pv-header, .content, .pv-nav { font-family: var(--font); }
     *{box-sizing:border-box}
-    html,body{margin:0; font:16px/1.55 var(--font); color:var(--text); background:var(--bg); overflow:auto}
-    body{$1overflow:auto$2}
+    html,body{height:100%}
+    body{margin:0; color:var(--text); background:var(--bg); overflow:auto; font-size:16px; line-height:1.55}
+    a{color:inherit; text-decoration:none}
+    button{font:inherit}
 
-    .viewport{height:100dvh; display:flex; flex-direction:column}
+    .viewport{min-height:100dvh; display:flex; flex-direction:column}
     .wrap{max-width:860px; margin:0 auto; width:100%; padding:0 28px}
 
     /* Top bar */
-    .pv-header{display:flex; align-items:center; justify-content:space-between; gap:12px; background:var(--bg); padding:18px 0; border-bottom:1px solid var(--border); z-index:10}
-    .menu-btn{display:inline-flex; align-items:center; gap:10px; background:#fff; border:1px solid var(--border); border-radius:999px; padding:8px 14px; font-weight:600; box-shadow:0 3px 10px rgba(0,0,0,.03); text-decoration:none; color:var(--text)}
+    .pv-header{position:sticky; top:0; display:flex; align-items:center; justify-content:space-between; gap:12px; background:rgba(255,255,255,.9); -webkit-backdrop-filter:saturate(1.2) blur(4px); backdrop-filter:saturate(1.2) blur(4px); padding:18px 0; border-bottom:1px solid var(--border); z-index:50}
+    .menu-btn{display:inline-flex; align-items:center; gap:10px; background:#fff; border:1px solid var(--border); border-radius:999px; padding:8px 14px; font-weight:600; box-shadow:0 3px 10px rgba(0,0,0,.03); color:var(--text)}
     .menu-btn svg{width:18px; height:18px}
 
-    /* Persistent masthead */
-    .masthead{display:none}
-    .masthead h1{margin:0 0 4px; font-size:clamp(26px,4.2vw,40px); line-height:1.1; letter-spacing:-.01em}
-    .masthead .subtitle{color:var(--muted); margin:0}
-
-    /* Slides area (below persistent header) */
-    .slides{position:relative; flex:1; overflow:auto; scroll-snap-type:y proximity}
-    .vpage{position:static; padding:18px 0 120px; background:var(--bg); scroll-snap-align:start}
-    .vpage.active{}
+    /* Slides area */
+    .slides{position:relative; overflow:visible; padding-bottom:0; scroll-snap-type:none}
+    .vpage{position:static; padding:0; background:transparent; scroll-snap-align:none; scroll-margin-bottom:0}
     .content{max-width:860px; margin:0 auto; padding:0 28px}
 
     /* Typography & media */
-    .content h2{margin:18px 0 10px; font-size:20px}
-    .content p{margin:0 0 12px}
-    .content ul{margin:0 0 8px 18px}
-    figure.media{margin:28px 0}
+    h1{margin:12px 0 6px; font-size:clamp(26px,4.2vw,40px); line-height:1.1; letter-spacing:-.01em; font-weight:700}
+    .subtitle{color:var(--muted); margin:0 0 18px}
+    .content h2{margin:18px 0 8px; font-size:20px; font-weight:700}
+    .content p{margin:0 0 10px}
+    .content ul{margin:0 0 8px 20px}
+    figure.media{margin:12px 0; padding:14px 0}
     figure.media img{width:100%; height:auto; display:block; border-radius:14px; border:1px solid var(--border); box-shadow:0 3px 12px rgba(0,0,0,.03); cursor:zoom-in}
-    figure.media figcaption{color:var(--muted); font-size:14px; margin-top:8px}
+    figure.media figcaption{color:var(--muted); font-size:14px; margin:6px 0 2px; line-height:1.35}
+
+    /* Flow spacing: consistent vertical rhythm */
+    .content > * + *{ margin-top:14px }
+    /* Tighten spacing after figures */
+    figure.media + *{ margin-top:12px }
 
     /* Lightbox */
     .lightbox{position:fixed; inset:0; background:rgba(0,0,0,.85); display:none; align-items:center; justify-content:center; padding:24px; z-index:999}
@@ -45,18 +52,27 @@
     .lightbox img{max-width:min(92vw,1200px); max-height:90vh; border-radius:14px; border:1px solid var(--border); box-shadow:0 10px 30px rgba(0,0,0,.4); background:#000}
 
     /* Bottom navigation */
-    .pv-nav{position:fixed; left:50%; transform:translateX(-50%); bottom:24px; display:flex; flex-direction:row; gap:14px; z-index:20}
-    .iconbtn{display:inline-grid; place-items:center; width:36px; height:36px; border:1px solid var(--text); border-radius:10px; background:var(--text); box-shadow:0 3px 10px rgba(0,0,0,.12); cursor:pointer; color:#fff; text-decoration:none}
+    /* nav removed */ .pv-nav{display:none}
+    .iconbtn{display:inline-grid; place-items:center; width:36px; height:36px; border:1px solid var(--text); border-radius:10px; background:var(--text); box-shadow:0 3px 10px rgba(0,0,0,.12); cursor:pointer; color:#fff}
     .iconbtn:hover{filter:brightness(1.05)}
     .iconbtn svg{width:20px; height:20px; stroke:currentColor}
+
+    /* Accessibility & motion preferences */
+    :focus-visible{outline:2px solid var(--text); outline-offset:2px}
+    .menu-btn:focus-visible,.iconbtn:focus-visible{outline:2px solid var(--text); outline-offset:2px}
+    @media (prefers-reduced-motion: reduce){
+      .vpage{transition:none}
+    }
 
     @media (max-width:760px){
       .wrap,.content{padding:0 28px}
     }
-      /* Ensure consistent typography across all controls */
-    button, input, select, textarea, a, .menu-btn, .iconbtn, .subtitle, .pv-header, .masthead, figcaption { font: inherit; }
-    /* Prevent platform zoom/size quirks */
-    html{ -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+      /* Bottom-centered navigation (restored) */
+    .pv-nav{position:fixed; left:50%; transform:translateX(-50%); bottom:24px; display:flex; gap:14px; z-index:20}
+    .iconbtn{display:inline-grid; place-items:center; width:36px; height:36px; border:1px solid var(--text); border-radius:10px; background:var(--text); box-shadow:0 3px 10px rgba(0,0,0,.12); cursor:pointer; color:#fff}
+    .iconbtn:hover{filter:brightness(1.05)}
+    .iconbtn svg{width:20px; height:20px; stroke:currentColor}
+      .page-spacer{height:160px}
   </style>
 </head>
 <body>
@@ -69,106 +85,108 @@
       <div style="flex:1"></div>
     </header>
 
-    <!-- Slides -->
-    <main class="slides" aria-live="polite">
-      <!-- Page 1 -->
-      <section class="vpage active" data-index="0" aria-label="What is Retrieval Practice">
-        <div class="content">
-          <h1>Deep Drive</h1>
-          <p class="subtitle">Retrieval Practice — principles, benefits, and classroom strategies</p>
-          <h2>What is Retrieval Practice?</h2>
-          <p>Retrieval practice is the act of deliberately recalling information from memory—without looking at notes or the text. This effortful recall strengthens memory traces, promotes durable learning, and helps learners identify gaps.</p>
-          <figure class="media">
-            <img src="https://raw.githubusercontent.com/ik3057823-ops/images-5/refs/heads/main/children-3708586_1280.jpg" alt="Learner recalling key concepts from memory" />
-            <figcaption>Effortful recall strengthens memory more than re‑reading.</figcaption>
-          </figure>
-        </div>
-      </section>
+    <!-- Slides (scrollable and via buttons) -->
+    <main class="wrap" aria-labelledby="title">
+      <section class="content">
+        <h1 id="title">Dive Deep</h1>
+        <p class="subtitle">Retrieval Practice — principles, benefits, and classroom strategies</p>
+        <h2>What is Retrieval Practice?</h2>
+        <p>Retrieval practice is the act of deliberately recalling information from memory—without looking at notes or the text. This effortful recall strengthens memory traces, promotes durable learning, and helps learners identify gaps.</p>
+        <figure class="media">
+          <img loading="lazy" src="https://raw.githubusercontent.com/ik3057823-ops/images-5/refs/heads/main/children-3708586_1280.jpg" alt="Learner recalling key concepts from memory" />
+          <figcaption>Effortful recall strengthens memory more than re‑reading.</figcaption>
+        </figure>
 
-      <!-- Page 2 -->
-      <section class="vpage" data-index="1" aria-label="Why it works">
-        <div class="content">
-          <h2>Why It Works</h2>
-          <p>Three mechanisms explain the impact of retrieval practice:</p>
-          <ul>
-            <li><strong>Strengthening effect:</strong> Each successful recall attempt consolidates learning and makes future retrieval easier.</li>
-            <li><strong>Diagnostic value:</strong> It reveals what has been learned and what still needs attention, supporting targeted study.</li>
-            <li><strong>Transfer & application:</strong> Practicing recall in varied contexts builds flexible knowledge usable in new situations.</li>
-          </ul>
-          <figure class="media">
-            <img src="https://raw.githubusercontent.com/ik3057823-ops/images-5/refs/heads/main/children-3708586_1280.jpg" alt="Diagram illustrating spacing and interleaving" />
-            <figcaption>Spacing and interleaving compound the benefits of retrieval.</figcaption>
-          </figure>
-        </div>
-      </section>
+        <h2>Why It Works</h2>
+        <p>Three mechanisms explain the impact of retrieval practice:</n>
+        <ul>
+          <li><strong>Strengthening effect:</strong> Each successful recall attempt consolidates learning and makes future retrieval easier.</li>
+          <li><strong>Diagnostic value:</strong> It reveals what has been learned and what still needs attention, supporting targeted study.</li>
+          <li><strong>Transfer & application:</strong> Practicing recall in varied contexts builds flexible knowledge usable in new situations.</li>
+        </ul>
+        <figure class="media">
+          <img loading="lazy" src="https://raw.githubusercontent.com/ik3057823-ops/images-5/refs/heads/main/children-3708586_1280.jpg" alt="Diagram illustrating spacing and interleaving" />
+          <figcaption>Spacing and interleaving compound the benefits of retrieval.</figcaption>
+        </figure>
 
-      <!-- Page 3 -->
-      <section class="vpage" data-index="2" aria-label="How to use it">
-        <div class="content">
-          <h2>How to Use It</h2>
-          <ul>
-            <li>Begin lessons with a 2–3 minute recall warm‑up about the previous topic.</li>
-            <li>Use short, low‑stakes quizzes and exit tickets to reinforce key ideas.</li>
-            <li>Interleave topics and space practice across days for compounding gains.</li>
-            <li>Encourage students to create and answer their own practice questions.</li>
-            <li>Cycle back to prior units with brief retrieval checks to combat forgetting.</li>
-          </ul>
-          <figure class="media">
-            <img src="https://raw.githubusercontent.com/ik3057823-ops/images-5/refs/heads/main/children-3708586_1280.jpg" alt="Students practicing retrieval with short quizzes" />
-            <figcaption>Short, frequent recall activities make learning stick.</figcaption>
-          </figure>
+        <h2>How to Use It</h2>
+        <ul>
+          <li>Begin lessons with a 2–3 minute recall warm‑up about the previous topic.</li>
+          <li>Use short, low‑stakes quizzes and exit tickets to reinforce key ideas.</li>
+          <li>Interleave topics and space practice across days for compounding gains.</li>
+          <li>Encourage students to create and answer their own practice questions.</li>
+          <li>Cycle back to prior units with brief retrieval checks to combat forgetting.</li>
+        </ul>
+          <h2>Summary</h2>
           <p>To make retrieval sustainable, keep tasks short and predictable: one or two prompts at the same point in each lesson. Rotate formats—free recall, one‑minute summaries, or two key terms explained in your own words—to maintain desirable difficulty without adding grading load.</p>
-          <p>Finally, close the loop. After learners attempt recall, reveal concise model answers or success criteria, then invite them to self‑correct. This immediate comparison transforms mistakes into feedback, building confidence and reinforcing the habit of recalling before re‑reading.</p>
-
-        </div>
+        <p>Finally, close the loop. After learners attempt recall, reveal concise model answers or success criteria, then invite them to self‑correct. This immediate comparison transforms mistakes into feedback, building confidence and reinforcing the habit of recalling before re‑reading.</p>
       </section>
+          <div class="page-spacer" aria-hidden="true"></div>
     </main>
 
-    <!-- Bottom-centered navigation (button-only) -->
-    <nav class="pv-nav" aria-label="Page navigation">
-      <button class="iconbtn" id="btn-up" aria-label="Previous page">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5l-6 6h12z"/></svg>
-      </button>
-      <button class="iconbtn" id="btn-down" aria-label="Next page">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l6-6H6z"/></svg>
-      </button>
-    </nav>
+    <!-- Bottom-centered navigation (scrolls to sections) -->
+    
   </div>
 
   <!-- Lightbox -->
+  <nav class="pv-nav" aria-label="Page navigation">
+    <button class="iconbtn" id="btn-up" aria-label="Previous section">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5l-6 6h12z"/></svg>
+    </button>
+    <button class="iconbtn" id="btn-down" aria-label="Next section">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l6-6H6z"/></svg>
+    </button>
+  </nav>
+
   <div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-label="Image preview"><img alt="Preview" /></div>
 
   <script>
-    (function(){
-      const pages = Array.from(document.querySelectorAll('.vpage'));
-      let idx = 0;
-      const up = document.getElementById('btn-up');
-      const down = document.getElementById('btn-down');
+  (function(){
+    // ---- Up/Down buttons scroll between content blocks ----
+    const targets = Array.from(document.querySelectorAll([
+      '.content > h2',
+      '.content > p',
+      '.content > ul',
+      '.content > ol',
+      '.content > figure.media'
+    ].join(',')));
+    const up = document.getElementById('btn-up');
+    const down = document.getElementById('btn-down');
+    let idx = 0;
 
-      function show(i){
-        if(!pages.length) return;
-        idx = (i + pages.length) % pages.length;
-        pages.forEach((p,j)=> p.classList.toggle('active', j===idx));
-        pages[idx].scrollIntoView({behavior:'smooth', block:'start'});
-      }
-      up?.addEventListener('click', ()=> show(idx-1));
-      down?.addEventListener('click', ()=> show(idx+1));
+    function go(i){
+      if(!targets.length) return;
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      idx = Math.max(0, Math.min(targets.length-1, i));
+      targets[idx].scrollIntoView({behavior: reduce ? 'auto' : 'smooth', block:'start'});
+    }
 
-      // Keyboard support
-      document.addEventListener('keydown', (e)=>{
-        if(e.key==='ArrowUp') show(idx-1);
-        if(e.key==='ArrowDown') show(idx+1);
-      });
+    up?.addEventListener('click', ()=> go(idx-1));
+    down?.addEventListener('click', ()=> go(idx+1));
 
-      // Lightbox
-      const overlay = document.getElementById('lightbox');
-      const overlayImg = overlay?.querySelector('img');
-      function openLB(src, alt){ if(!overlay||!overlayImg) return; overlayImg.src=src; overlayImg.alt=alt||'Preview'; overlay.classList.add('open'); overlay.setAttribute('aria-hidden','false'); }
-      function closeLB(){ if(!overlay) return; overlay.classList.remove('open'); overlay.setAttribute('aria-hidden','true'); }
-      document.querySelectorAll('figure.media img').forEach(img=>{ img.addEventListener('click', ()=> openLB(img.src, img.alt)); });
-      overlay?.addEventListener('click', closeLB);
-      document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeLB(); });
-    })();
-  </script>
+    // Keep index in sync with scroll
+    if(targets.length){
+      const io = new IntersectionObserver((entries)=>{
+        // Pick the element most in view
+        let best=null, bestRatio=0;
+        for(const e of entries){ if(e.isIntersecting && e.intersectionRatio>bestRatio){ best=e; bestRatio=e.intersectionRatio; } }
+        if(best){ idx = targets.indexOf(best.target); }
+      }, {threshold:[0.5]});
+      targets.forEach(el=> io.observe(el));
+    } else {
+      // No targets: hide nav
+      document.querySelector('.pv-nav')?.setAttribute('style','display:none');
+    }
+
+    // ---- Lightbox ----
+    const overlay = document.getElementById('lightbox');
+    const overlayImg = overlay?.querySelector('img');
+    function openLB(src, alt){ if(!overlay||!overlayImg) return; overlayImg.src=src; overlayImg.alt=alt||'Preview'; overlay.classList.add('open'); overlay.setAttribute('aria-hidden','false'); }
+    function closeLB(){ if(!overlay) return; overlay.classList.remove('open'); overlay.setAttribute('aria-hidden','true'); }
+    document.querySelectorAll('figure.media img').forEach(img=>{ img.addEventListener('click', ()=> openLB(img.src, img.alt)); });
+    overlay?.addEventListener('click', closeLB);
+    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeLB(); });
+  })();
+</script>
 </body>
 </html>
