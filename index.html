@@ -5,7 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dive Deep — Retrieval Practice</title>
   <style>
-    :root{$1 --split-left: 30vw;}
+    :root{
+      --font: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      --text:#111; --muted:#5f6368; --border:#e6e6e6; --bg:#ffffff;
+      --split-left: 30vw; /* default split (menu) width */
+    }
+
     /* Base */
     html,body{height:100%}
     *{box-sizing:border-box}
@@ -20,7 +25,7 @@
     .content{max-width:860px; margin:0 auto; padding:0 28px}
 
     /* Sticky header */
-    .pv-header{position:sticky; top:0; display:flex; align-items:center; justify-content:space-between; gap:12px; background:rgba(255,255,255,.9); -webkit-backdrop-filter:saturate(1.2) blur(4px); backdrop-filter:saturate(1.2) blur(4px); padding:18px 0; border-bottom:1px solid var(--border); z-index:50}
+    .pv-header{position:sticky; top:0; display:flex; align-items:center; justify-content:space-between; gap:12px; background:#fff; padding:14px 0; border-bottom:1px solid var(--border); z-index:50}
     .menu-btn{display:inline-flex; align-items:center; gap:10px; background:#fff; border:1px solid var(--border); border-radius:999px; padding:8px 14px; font-weight:600; box-shadow:0 3px 10px rgba(0,0,0,.03); color:var(--text)}
     .menu-btn svg{width:18px; height:18px}
 
@@ -44,19 +49,25 @@
 
     /* Bottom Up/Down navigation */
     .pv-nav{position:fixed; left:50%; transform:translateX(-50%); bottom:24px; display:flex; gap:18px; z-index:20}
-    .iconbtn{display:inline-grid; place-items:center; width:80px; height:80px; border:1px solid var(--text); border-radius:16px; background:var(--text); box-shadow:0 6px 18px rgba(0,0,0,.16); cursor:pointer; color:#fff; -webkit-tap-highlight-color: transparent; touch-action:manipulation}
-    .iconbtn svg{width:36px; height:36px; stroke:currentColor}
+    .iconbtn{display:inline-grid; place-items:center; width:52px; height:52px; border:1px solid var(--text); border-radius:12px; background:var(--text); box-shadow:0 6px 18px rgba(0,0,0,.16); cursor:pointer; color:#fff; -webkit-tap-highlight-color: transparent; touch-action:manipulation}
+    .iconbtn svg{width:24px; height:24px; stroke:currentColor}
     .iconbtn:hover{filter:brightness(1.05)}
 
     /* 30/70 split view (Menu | Content) */
     .split-left{display:none}
     body.split-open .split-left{display:flex; flex-direction:column; position:fixed; z-index:60; left:0; top:0; bottom:0; width:var(--split-left); max-width:var(--split-left); background:#fff; border-right:1px solid var(--border)}
     body.split-open .split-left iframe{flex:1; width:100%; height:100%; border:0}
-    body.split-open .viewport{position:fixed; left:var(--split-left); right:0; top:0; bottom:0; overflow:auto; margin:0; height:auto; background:var(--bg)}
+    body.split-open .viewport{position:fixed; left:var(--split-left); right:0; top:0; bottom:0; overflow:auto; margin:0; height:auto; background:var(--bg); display:flex; flex-direction:column}
     /* Make inner containers use full right-pane width in split */
     body.split-open .wrap, body.split-open .content{max-width:none; width:100%; padding-left:20px; padding-right:20px}
     /* Center buttons in right pane while split */
     body.split-open .pv-nav{left:calc(var(--split-left) + (100vw - var(--split-left))/2); transform:translateX(-50%)}
+
+    /* Resizer */
+    .split-resizer{display:none}
+    body.split-open .split-resizer{display:block; position:fixed; top:0; bottom:0; left:var(--split-left); width:10px; margin-left:-5px; cursor:col-resize; z-index:70; background:transparent}
+    body.split-open .split-resizer::before{content:""; position:absolute; top:0; bottom:0; left:50%; width:1px; background:var(--border); transform:translateX(-50%)}
+    body.split-open.resizing .split-left iframe{pointer-events:none}
 
     /* Accessibility */
     :focus-visible{outline:2px solid var(--text); outline-offset:2px}
@@ -65,19 +76,14 @@
     /* Mobile */
     @media (max-width:760px){
       .wrap,.content{padding:0 16px}
-      .iconbtn{width:96px; height:96px; border-radius:18px}
-      .iconbtn svg{width:44px; height:44px}
+      .iconbtn{width:64px; height:64px; border-radius:14px}
+      .iconbtn svg{width:28px; height:28px}
       /* Stack 50/50 vertically on mobile for usability */
       body.split-open .split-left{width:100vw; height:50vh}
       body.split-open .viewport{left:0; top:50vh; right:0; bottom:0}
       body.split-open .pv-nav{left:50%; transform:translateX(-50%)}
+      .split-resizer{display:none !important}
     }
-      /* Resizer */
-    .split-resizer{display:none}
-    body.split-open .split-resizer{display:block; position:fixed; top:0; bottom:0; left:var(--split-left); width:10px; margin-left:-5px; cursor:col-resize; z-index:70; background:transparent}
-    body.split-open .split-resizer::before{content:""; position:absolute; top:0; bottom:0; left:50%; width:1px; background:var(--border); transform:translateX(-50%)}
-    body.split-open.resizing .split-left iframe{pointer-events:none}
-    @media (max-width:760px){ .split-resizer{display:none !important} }
   </style>
 </head>
 <body>
@@ -89,9 +95,11 @@
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
     </div>
-    <iframe id="splitIframe" title="Course navigation" src="https://ik3057823-ops.github.io/darsmenu/"></iframe>
+    <iframe id="splitIframe" title="Course navigation" src="https://ik3057823-ops.github.io/menulesson/"></iframe>
   </aside>
   <div id="splitResizer" class="split-resizer" aria-hidden="true"></div>
+
+  <!-- Main content pane -->
   <div class="viewport">
     <header class="wrap pv-header">
       <a href="#" id="menuBtn" class="menu-btn" aria-expanded="false">
@@ -157,6 +165,8 @@
 
   <script>
   (function(){
+    const MENU_URL = 'https://ik3057823-ops.github.io/menulesson/';
+
     // ---- Up/Down buttons scroll between content blocks ----
     const targets = Array.from(document.querySelectorAll([
       '.content > h1',
@@ -183,7 +193,9 @@
     if(targets.length){
       const io = new IntersectionObserver((entries)=>{
         let best=null, bestRatio=0;
-        for(const e of entries){ if(e.isIntersecting && e.intersectionRatio>bestRatio){ best=e; bestRatio=e.intersectionRatio; } }
+        for(const e of entries){
+          if(e.isIntersecting && e.intersectionRatio>bestRatio){ best=e; bestRatio=e.intersectionRatio; }
+        }
         if(best){ idx = targets.indexOf(best.target); }
       }, {threshold:[0.5]});
       targets.forEach(el=> io.observe(el));
@@ -194,9 +206,18 @@
     // ---- Lightbox ----
     const overlay = document.getElementById('lightbox');
     const overlayImg = overlay?.querySelector('img');
-    function openLB(src, alt){ if(!overlay||!overlayImg) return; overlayImg.src=src; overlayImg.alt=alt||'Preview'; overlay.classList.add('open'); overlay.setAttribute('aria-hidden','false'); }
-    function closeLB(){ if(!overlay) return; overlay.classList.remove('open'); overlay.setAttribute('aria-hidden','true'); }
-    document.querySelectorAll('figure.media img').forEach(img=>{ img.addEventListener('click', ()=> openLB(img.src, img.alt)); });
+    function openLB(src, alt){
+      if(!overlay||!overlayImg) return;
+      overlayImg.src=src; overlayImg.alt=alt||'Preview';
+      overlay.classList.add('open'); overlay.setAttribute('aria-hidden','false');
+    }
+    function closeLB(){
+      if(!overlay) return;
+      overlay.classList.remove('open'); overlay.setAttribute('aria-hidden','true');
+    }
+    document.querySelectorAll('figure.media img').forEach(img=>{
+      img.addEventListener('click', ()=> openLB(img.src, img.alt));
+    });
     overlay?.addEventListener('click', closeLB);
     document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeLB(); });
 
@@ -207,7 +228,20 @@
       e.preventDefault();
       document.body.classList.add('split-open');
       menuBtn.setAttribute('aria-expanded','true');
+      // try to load menu, if blocked fallback to opening in a new tab and closing split
+      const iframe = document.getElementById('splitIframe');
+      let failedTimer = setTimeout(()=>{
+        try{
+          if(iframe && (!iframe.contentDocument || iframe.contentWindow.location.href === 'about:blank')){ throw new Error('blocked'); }
+        }catch(_){
+          window.open(MENU_URL, '_blank', 'noopener');
+          document.body.classList.remove('split-open');
+          menuBtn?.setAttribute('aria-expanded','false');
+        }
+      }, 1400);
+      iframe?.addEventListener('load', ()=>{ clearTimeout(failedTimer); }, { once:true });
     });
+
     splitClose?.addEventListener('click', ()=>{
       document.body.classList.remove('split-open');
       menuBtn?.setAttribute('aria-expanded','false');
@@ -239,13 +273,12 @@
     });
     resizer?.addEventListener('pointermove', onMove);
     resizer?.addEventListener('pointerup', ()=>{ dragging = false; document.body.classList.remove('resizing'); });
-    window.addEventListener('resize', ()=>{ /* keep var but nothing else needed */ });
-      menuBtn?.setAttribute('aria-expanded','false');
-    });
+    resizer?.addEventListener('pointercancel', ()=>{ dragging = false; document.body.classList.remove('resizing'); });
 
-    // ---- Basic self-tests ----
-    console.assert(document.querySelectorAll('.content').length === 1, 'Content section exists');
-    console.assert(document.getElementById('splitIframe'), 'Split iframe present');
+    // -------- Self tests (non-blocking) --------
+    try{ console.assert(document.querySelectorAll('.content').length === 1, 'Content section exists'); }catch(_){ }
+    try{ console.assert(!!document.getElementById('splitIframe'), 'Split iframe present'); }catch(_){ }
+    try{ go(idx); }catch(e){ console.error('go() failed', e); }
   })();
   </script>
 </body>
