@@ -52,8 +52,12 @@
     .lightbox img{max-width:min(92vw,1200px); max-height:90vh; border-radius:14px; border:1px solid var(--border); box-shadow:0 10px 30px rgba(0,0,0,.4); background:#000}
 
     /* Bottom navigation */
-    /* nav removed */ .pv-nav{display:none}
-    .iconbtn{display:inline-grid; place-items:center; width:36px; height:36px; border:1px solid var(--text); border-radius:10px; background:var(--text); box-shadow:0 3px 10px rgba(0,0,0,.12); cursor:pointer; color:#fff}
+    /* nav removed */ .pv-nav{position:fixed; left:50%; transform:translateX(-50%); bottom:24px; display:flex; gap:18px; z-index:20}
+    .iconbtn{display:inline-grid; place-items:center; width:80px; height:80px; border:1px solid var(--text); border-radius:16px; background:var(--text); box-shadow:0 6px 18px rgba(0,0,0,.16); cursor:pointer; color:#fff; -webkit-tap-highlight-color: transparent; touch-action:manipulation}
+    .iconbtn svg{width:36px; height:36px; stroke:currentColor}
+    .iconbtn:hover{filter:brightness(1.05)}
+    .iconbtn svg{width:22px; height:22px; stroke:currentColor}
+    .iconbtn:hover{filter:brightness(1.05)}
     .iconbtn:hover{filter:brightness(1.05)}
     .iconbtn svg{width:20px; height:20px; stroke:currentColor}
 
@@ -65,7 +69,16 @@
     }
 
     @media (max-width:760px){
-      .wrap,.content{padding:0 28px}
+      .wrap,.content{padding:0 16px}
+      .pv-nav{gap:24px; bottom:calc(28px + env(safe-area-inset-bottom))}
+      .iconbtn{width:96px; height:96px; border-radius:18px}
+      .iconbtn svg{width:44px; height:44px}
+    }
+      .pv-nav{gap:20px; bottom:calc(28px + env(safe-area-inset-bottom))}
+      .iconbtn{width:56px; height:56px; border-radius:14px}
+      .iconbtn svg{width:26px; height:26px}
+    }
+    }
     }
       /* Bottom-centered navigation (restored) */
     .pv-nav{position:fixed; left:50%; transform:translateX(-50%); bottom:24px; display:flex; gap:14px; z-index:20}
